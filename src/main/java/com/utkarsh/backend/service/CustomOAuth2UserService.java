@@ -29,8 +29,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 oAuth2User.getAttribute("id"),
                 oAuth2User.getAttribute("login"),
                 oAuth2User.getAttribute("email"),
-                userRequest.getAccessToken().getTokenValue()
+                userRequest.getAccessToken().getTokenValue(),
+                oAuth2User.getAttribute("avatar_url"),
+                oAuth2User.getAttribute("name")
         );
-        return oAuth2User;
+        return
+                new AppUserPrincipal
+                        (userService.getUserByProviderAndProviderId(
+                                provider, oAuth2User.getAttribute("id")),
+                                oAuth2User.getAttributes());
     }
 }

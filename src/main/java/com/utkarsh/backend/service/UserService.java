@@ -15,7 +15,14 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public void registerOrUpdateUser(String provider , Integer providerId, String username, String email, String accessToken) {
+    public void registerOrUpdateUser(String provider ,
+                                     Integer providerId,
+                                     String username,
+                                     String email,
+                                     String accessToken ,
+                                     String avatarUrl ,
+                                     String name
+                                     ) {
 
         Optional<User> existingUser = userRepo.findByProviderAndProviderId(provider, providerId);
 
@@ -24,6 +31,8 @@ public class UserService {
             user.setUsername(username);
             user.setEmail(email);
             user.setAccessToken(accessToken);
+            user.setAvatarUrl(avatarUrl);
+            user.setName(name);
             userRepo.save(user);
         } else {
             User newUser = new User();
@@ -32,9 +41,14 @@ public class UserService {
             newUser.setUsername(username);
             newUser.setEmail(email);
             newUser.setAccessToken(accessToken);
+            newUser.setAvatarUrl(avatarUrl);
+            newUser.setName(name);
             userRepo.save(newUser);
         }
+    }
 
 
+    public User getUserByProviderAndProviderId(String provider, Integer id) {
+        return userRepo.findByProviderAndProviderId(provider, id).orElse(null);
     }
 }

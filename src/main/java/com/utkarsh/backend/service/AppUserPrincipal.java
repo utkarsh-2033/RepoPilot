@@ -10,15 +10,22 @@ import java.util.Map;
 
 public class AppUserPrincipal implements OAuth2User {
 
-    private User user;
+    private final User user;
 
-    public AppUserPrincipal(User user) {
+    private final Map<String, Object> attributes;
+
+    public AppUserPrincipal(User user , Map<String, Object> attributes) {
         this.user = user;
+        this.attributes=attributes;
+
+    }
+    public User getUser() {
+        return user;
     }
 
     @Override
     public Map<String, Object> getAttributes() {
-        return Map.of();
+        return attributes;
     }
 
     @Override
@@ -28,6 +35,6 @@ public class AppUserPrincipal implements OAuth2User {
 
     @Override
     public String getName() {
-        return "";
+        return user.getName();
     }
 }

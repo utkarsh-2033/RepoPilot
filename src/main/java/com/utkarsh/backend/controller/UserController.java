@@ -1,18 +1,16 @@
 package com.utkarsh.backend.controller;
 
-import org.springframework.http.ResponseEntity;
+import com.utkarsh.backend.entity.User;
+import com.utkarsh.backend.service.AppUserPrincipal;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/")
 public class UserController {
 
-    public UserDetails getUser(@AuthenticationPrincipal UserDetails user) {
-
-        return user;
+    public User getUser(@AuthenticationPrincipal AppUserPrincipal user) {
+        return user.getUser();
     }
 }

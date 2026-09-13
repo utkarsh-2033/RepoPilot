@@ -1,5 +1,6 @@
-package com.utkarsh.backend.service;
+package com.utkarsh.backend.service.auth;
 
+import com.utkarsh.backend.service.UserService;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

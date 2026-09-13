@@ -1,5 +1,5 @@
 package com.utkarsh.backend.config;
-import com.utkarsh.backend.service.CustomOAuth2UserService;
+import com.utkarsh.backend.service.auth.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

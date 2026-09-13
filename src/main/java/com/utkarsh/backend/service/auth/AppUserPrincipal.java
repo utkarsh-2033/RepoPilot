@@ -1,4 +1,4 @@
-package com.utkarsh.backend.service;
+package com.utkarsh.backend.service.auth;
 
 import com.utkarsh.backend.entity.User;
 import org.springframework.security.core.GrantedAuthority;

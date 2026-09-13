@@ -2,6 +2,7 @@ package com.utkarsh.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
@@ -20,6 +21,8 @@ public class RestClientConfig {
 
         return RestClient.builder()
                 .requestInterceptor(requestInterceptor)
+                .defaultHeader(HttpHeaders.ACCEPT, "application/vnd.github+json")
+                .defaultHeader("X-GitHub-Api-Version", "2026-03-10")
                 .build();
     }
 

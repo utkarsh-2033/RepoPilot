@@ -91,7 +91,7 @@ public class Repository {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name = "updated_at_github", nullable = false)
+    @Column(name = "updated_at_github")
     private Instant updatedAtGithub;
 
     @Column(name = "updated_at", nullable = false)

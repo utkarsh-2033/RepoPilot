@@ -6,6 +6,7 @@ import com.utkarsh.backend.repository.RepositoryRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +34,9 @@ public class RepositoryPersistenceService {
                 repository.setOwner(repo.owner().login());
                 repository.setOwnerHtmlUrl(repo.owner().html_url());
                 repository.setIsPrivate(repo.isPrivate());
+                if(repo.updatedAtGithub() != null ){
+                    repository.setUpdatedAtGithub(repo.updatedAtGithub());
+                }
                 repositoryRepo.save(repository);
                 return;
             }
@@ -42,12 +46,17 @@ public class RepositoryPersistenceService {
                     .ownerHtmlUrl(repo.owner().html_url())
                     .name(repo.name())
                     .fullName(repo.fullName())
+                    .description(repo.description())
                     .isPrivate(repo.isPrivate())
                     .defaultBranch(repo.defaultBranch())
                     .language(repo.language())
                     .userId(userId)
                     .build();
+            if(repo.updatedAtGithub() != null){
+                repository.setUpdatedAtGithub(repo.updatedAtGithub());
+            }
             repositoryRepo.save(repository);
         });
     }
+
 }

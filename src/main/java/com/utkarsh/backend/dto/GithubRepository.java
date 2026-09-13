@@ -2,6 +2,8 @@ package com.utkarsh.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.Instant;
+
 public record GithubRepository(
         @JsonProperty("id") Long githubRepoId,
         String name,
@@ -12,7 +14,6 @@ public record GithubRepository(
         String language,
         GithubRepoOwner owner,
         @JsonProperty("private") Boolean isPrivate,
-        @JsonProperty("updated_at") String updatedAtGithub
+        @JsonProperty("updated_at") Instant updatedAtGithub
 ) {
 }
-

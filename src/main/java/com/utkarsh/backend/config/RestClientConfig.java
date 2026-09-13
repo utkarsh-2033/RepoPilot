@@ -20,6 +20,7 @@ public class RestClientConfig {
         requestInterceptor.setClientRegistrationIdResolver(clientRegistrationIdResolver());
 
         return RestClient.builder()
+                .baseUrl("https://api.github.com")
                 .requestInterceptor(requestInterceptor)
                 .defaultHeader(HttpHeaders.ACCEPT, "application/vnd.github+json")
                 .defaultHeader("X-GitHub-Api-Version", "2026-03-10")

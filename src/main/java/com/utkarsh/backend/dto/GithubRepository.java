@@ -11,7 +11,8 @@ public record GithubRepository(
         @JsonProperty("default_branch") String defaultBranch,
         String language,
         GithubRepoOwner owner,
-        @JsonProperty("private") Boolean isPrivate
+        @JsonProperty("private") Boolean isPrivate,
+        @JsonProperty("updated_at") String updatedAtGithub
 ) {
 }
 

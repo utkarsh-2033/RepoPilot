@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class UserController {
 
-    @GetMapping("/user")
+    @GetMapping("api/user/me")
     public ResponseEntity<UserResponse> getUser(@AuthenticationPrincipal AppUserPrincipal user) {
         User u = user.getUser();
         UserResponse userResponse =

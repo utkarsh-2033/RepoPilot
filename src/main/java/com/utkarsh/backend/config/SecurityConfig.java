@@ -46,10 +46,16 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/login_url",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth-> oauth
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect("http://localhost:3000/dashboard");
+                        })
                         .userInfoEndpoint((userInfo) -> userInfo
                         .userService(this.customOAuth2UserService)
                 ))

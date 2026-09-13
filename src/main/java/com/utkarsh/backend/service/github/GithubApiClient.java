@@ -18,13 +18,21 @@ public class GithubApiClient {
     }
 
     public List<GithubRepository> getUserRepositories() {
+        final int  perPage=30;
         List<GithubRepository> repos=new ArrayList<>();
         int page=1;
         while (true){
-            List<GithubRepository> pageRepos = restClient.get()
-                    .uri("https://api.github.com/user/repos?per_page=30&page=" + page)
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<List<GithubRepository>>(){});
+            int currentPage=page;
+            List<GithubRepository> pageRepos =
+                    restClient.get()
+                            .uri(uri -> uri
+                                    .path("/user/repos")
+                                    .queryParam("per_page", perPage)
+                                    .queryParam("page", currentPage)
+                                    .build()
+                            )
+                            .retrieve()
+                            .body(new ParameterizedTypeReference<List<GithubRepository>>(){});
 
             if(pageRepos==null || pageRepos.isEmpty()){
                 break;

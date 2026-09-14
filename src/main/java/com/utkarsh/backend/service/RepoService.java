@@ -3,25 +3,20 @@ package com.utkarsh.backend.service;
 import com.utkarsh.backend.dto.GithubRepository;
 import com.utkarsh.backend.dto.GithubRepositoryResponse;
 import com.utkarsh.backend.entity.Repository;
+import com.utkarsh.backend.exception.RepositoryNotFoundException;
 import com.utkarsh.backend.repository.RepositoryRepo;
 import com.utkarsh.backend.service.github.GithubApiClient;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class RepoService {
     private final GithubApiClient githubApiClient;
     private final RepositoryRepo repositoryRepo;
     private final RepositoryPersistenceService repositoryPersistenceService;
-
-    public RepoService(GithubApiClient githubApiClient ,
-                       RepositoryRepo repositoryRepo,
-                       RepositoryPersistenceService repositoryPersistenceService) {
-        this.repositoryRepo = repositoryRepo;
-        this.githubApiClient = githubApiClient;
-        this.repositoryPersistenceService = repositoryPersistenceService;
-    }
 
     public void syncRepositories(UUID userId) {
         List<GithubRepository> repos= githubApiClient.getUserRepositories();
@@ -48,6 +43,9 @@ public class RepoService {
             );
             response.add(r);
         });
+        if(response.isEmpty()){
+            throw new RepositoryNotFoundException("No repositories found for user: " + userId);
+        }
         return response.stream()
                 .sorted(Comparator.comparing(GithubRepositoryResponse::createdAt).reversed())
                 .toList();
@@ -72,7 +70,7 @@ public class RepoService {
                     , repo.getUpdatedAt()
             );
         } else {
-            throw new NoSuchElementException("Repository not found for user: " + userId + " and githubRepoId: " + githubRepoId);
+            throw new RepositoryNotFoundException("Repository not found for user: " + userId + " and githubRepoId: " + githubRepoId);
         }
     }
 }

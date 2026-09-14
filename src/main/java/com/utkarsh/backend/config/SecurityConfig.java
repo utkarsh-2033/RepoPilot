@@ -3,6 +3,7 @@ import com.utkarsh.backend.service.auth.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -49,8 +50,9 @@ public class SecurityConfig {
                         .requestMatchers("/login_url",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
+                                "/v3/api-docs/**").permitAll()  // Allow  login URL and Swagger UI
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
+                        .anyRequest().authenticated() // All other requests require authentication
                 )
                 .oauth2Login(oauth-> oauth
                         .successHandler((request, response, authentication) -> {

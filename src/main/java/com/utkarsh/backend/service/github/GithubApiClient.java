@@ -12,6 +12,7 @@ import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GithubApiClient {
@@ -63,4 +64,34 @@ public class GithubApiClient {
         }
         return repos;
     }
+
+    public Map<String, Object> getRepoTree(String owner , String repoName , String branchName){
+
+        Map<String, Object> tree=restClient.get()
+                .uri(uri->uri
+                        .path("/repos/{owner}/{repo}/git/trees/{branchName}")
+                        .queryParam("recursive", "1")
+                        .build(owner, repoName, branchName)
+                )
+                .retrieve()
+                .body(new ParameterizedTypeReference<Map<String, Object>>() {
+                });
+
+       return tree;
+    }
+
+    public Map<String,Object> getFileContent(String owner , String repoName , String filePath){
+        Map<String,Object> fileContent=restClient.get()
+                .uri(uri->uri
+                        .path("/repos/{owner}/{repo}/contents/{filePath}")
+                        .build(owner, repoName, filePath)
+                )
+                .retrieve()
+                .body(new ParameterizedTypeReference<Map<String, Object>>() {
+                });
+        return fileContent;
+    }
+
+
+
 }

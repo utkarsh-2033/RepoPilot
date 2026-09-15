@@ -5,8 +5,6 @@ import com.utkarsh.backend.entity.Repository;
 import com.utkarsh.backend.repository.RepositoryRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,8 +45,9 @@ public class RepositoryPersistenceService {
                     .name(repo.name())
                     .fullName(repo.fullName())
                     .description(repo.description())
+                    .htmlUrl(repo.htmlUrl())
                     .isPrivate(repo.isPrivate())
-                    .defaultBranch(repo.defaultBranch())
+                    .defaultBranch(repo.defaultBranch()==null ? "main" : repo.defaultBranch())
                     .language(repo.language())
                     .userId(userId)
                     .build();

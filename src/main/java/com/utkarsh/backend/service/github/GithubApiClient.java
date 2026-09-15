@@ -1,6 +1,7 @@
 package com.utkarsh.backend.service.github;
 
 import com.utkarsh.backend.dto.GithubRepository;
+import com.utkarsh.backend.entity.RepoFile;
 import com.utkarsh.backend.exception.GithubApiClientException;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
@@ -80,16 +81,15 @@ public class GithubApiClient {
        return tree;
     }
 
-    public Map<String,Object> getFileContent(String owner , String repoName , String filePath){
-        Map<String,Object> fileContent=restClient.get()
+    public RepoFile getFileContent(String owner , String repoName , String filePath){
+        return restClient.get()
                 .uri(uri->uri
                         .path("/repos/{owner}/{repo}/contents/{filePath}")
                         .build(owner, repoName, filePath)
                 )
                 .retrieve()
-                .body(new ParameterizedTypeReference<Map<String, Object>>() {
+                .body(new ParameterizedTypeReference<RepoFile>() {
                 });
-        return fileContent;
     }
 
 

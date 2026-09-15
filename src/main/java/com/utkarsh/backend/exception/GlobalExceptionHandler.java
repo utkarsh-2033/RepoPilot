@@ -47,6 +47,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(e.getStatusCode().value()).body(exceptionResponse);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ExceptionRespons> handleRuntimeException(RuntimeException e, HttpServletRequest req) {
+        ExceptionRespons exceptionResponse = new ExceptionRespons(
+                Instant.now(),
+                500,
+                "",
+                e.getMessage(),
+                req.getRequestURI()
+        );
+        return ResponseEntity.status(500).body(exceptionResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionRespons> handleException(Exception e , HttpServletRequest req) {
         ExceptionRespons exceptionResponse = new ExceptionRespons(

@@ -65,10 +65,10 @@ public class Repository {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "index_status", nullable = false, length = 20)
-//    @Builder.Default
-//    private IndexStatus indexStatus = IndexStatus.PENDING;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "index_status", nullable = false, length = 20)
+    @Builder.Default
+    private IndexStatus indexStatus = IndexStatus.PENDING;
 
     @Column(name = "indexed_at")
     private Instant indexedAt;
@@ -104,9 +104,9 @@ public class Repository {
             createdAt = now;
         }
         updatedAt = now;
-//        if (indexStatus == null) {
-//            indexStatus = IndexStatus.PENDING;
-//        }
+        if (indexStatus == null) {
+            indexStatus = IndexStatus.PENDING;
+        }
     }
 
 }

@@ -2,7 +2,9 @@ package com.utkarsh.backend.service;
 
 import com.utkarsh.backend.dto.GithubRepository;
 import com.utkarsh.backend.dto.GithubRepositoryResponse;
+import com.utkarsh.backend.dto.RepositoryIndexStatusResponse;
 import com.utkarsh.backend.entity.Repository;
+import com.utkarsh.backend.exception.BadRequestException;
 import com.utkarsh.backend.exception.RepositoryNotFoundException;
 import com.utkarsh.backend.repository.RepositoryRepo;
 import com.utkarsh.backend.service.github.GithubApiClient;
@@ -72,5 +74,16 @@ public class RepoService {
         } else {
             throw new RepositoryNotFoundException("Repository not found for user: " + userId + " and githubRepoId: " + githubRepoId);
         }
+    }
+
+    public RepositoryIndexStatusResponse getRepoIndexingStatus(Long id , UUID userid ){
+        Repository repo= repositoryRepo.findByUserIdAndGithubRepoId(userid , id)
+                .orElseThrow(()-> new BadRequestException("Repository with user id "+ userid + " and repository id "+ id+ "not found"));
+        return new RepositoryIndexStatusResponse(
+                repo.getIndexStatus().toString() ,
+                repo.getErrorMessage() ,
+                repo.getFilesProcessed() ,
+                repo.getFilesTotal(),
+                repo.getChunkCount());
     }
 }

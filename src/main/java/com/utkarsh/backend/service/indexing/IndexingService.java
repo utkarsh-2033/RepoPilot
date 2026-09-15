@@ -104,7 +104,7 @@ public class IndexingService {
                         byte[] decodedBytes = Base64.getDecoder().decode(file.content());
                         fileConentent = new String(decodedBytes);
                     }
-                    List<Document> chunks = fileChunking.chunkFile(filePath, fileConentent, repoId);
+                    List<Document> chunks = fileChunking.chunkFile(filePath, fileConentent, repo.getId());
 
                     chunkCount += chunks.size();
                     batch.addAll(chunks);
@@ -120,6 +120,10 @@ public class IndexingService {
                 if (filesProcessed % PROGRESS_EVERY_N_FILES == 0 || filesProcessed == filePaths.size()) {
                     updateIndexStatus(userId ,repoId, filesProcessed, filesTotal, chunkCount, IndexStatus.INDEXING, null);
                 }
+                if (!batch.isEmpty()) {
+                    vectorStore.add(batch);
+                }
+                markReadyStatus(userId, repoId);
             }
         }
     }
@@ -144,6 +148,17 @@ public class IndexingService {
             Repository repo = repository.get();
             repo.setIndexStatus(IndexStatus.FAILED);
             repo.setErrorMessage(errorMessage);
+            repositoryRepo.save(repo);
+        }
+    }
+
+    public void markReadyStatus(UUID userId, Long repoId) {
+        Optional<Repository> repository =
+                repositoryRepo.findByUserIdAndGithubRepoId(userId, repoId);
+        if (repository.isPresent()) {
+            Repository repo = repository.get();
+            repo.setIndexStatus(IndexStatus.READY);
+            repo.setErrorMessage(null);
             repositoryRepo.save(repo);
         }
     }

@@ -23,6 +23,7 @@ public class UserController {
                         u.getName(),
                         u.getAvatarUrl());
         return ResponseEntity.ok(userResponse);
+
     }
 
     @GetMapping("/login_url")

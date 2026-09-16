@@ -23,8 +23,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(exceptionResponse);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ExceptionRespons> handleUserNotFound(UserNotFoundException e, HttpServletRequest req) {
+    @ExceptionHandler(SessionNotFoundException.class)
+    public ResponseEntity<ExceptionRespons> handleUserNotFound(SessionNotFoundException e, HttpServletRequest req) {
         ExceptionRespons exceptionResponse = new ExceptionRespons(
                 Instant.now(),
                 404,

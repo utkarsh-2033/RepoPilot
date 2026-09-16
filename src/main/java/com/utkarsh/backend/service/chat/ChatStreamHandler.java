@@ -5,6 +5,7 @@ import com.utkarsh.backend.entity.ChatMessage;
 import com.utkarsh.backend.repository.ChatMessageRepo;
 import com.utkarsh.backend.service.citation.CitationValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ChatStreamHandler {
 
     private final CitationValidator citationValidator;
@@ -51,7 +53,7 @@ public class ChatStreamHandler {
                                         answer,
                                         result.availableCitations()
                                 );
-
+//                        log.info("Valid citations: {}", validCitations);
                         ChatMessage assistantMessage =
                                 ChatMessage.builder()
                                         .sessionId(sessionId)

@@ -8,10 +8,11 @@ import com.utkarsh.backend.exception.BadRequestException;
 import com.utkarsh.backend.exception.RepositoryNotFoundException;
 import com.utkarsh.backend.repository.RepositoryRepo;
 import com.utkarsh.backend.service.github.GithubApiClient;
-import lombok.AllArgsConstructor;
+import com.utkarsh.backend.service.github.GithubApiRateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -24,19 +25,27 @@ public class IndexingService {
 
     private static final int VECTOR_BATCH_SIZE = 32;
     private static final int PROGRESS_EVERY_N_FILES = 4;
+    private static final String METADATA_REPO_ID = "repoId";
 
     private final  GithubApiClient githubApiClient;
     private final RepositoryRepo repositoryRepo;
     private final FileFilter fileFilter;
     private final FileChunking fileChunking;
     private final VectorStore vectorStore;;
+    private final GithubApiRateLimiter rateLimiter;
 
-    IndexingService(GithubApiClient githubApiClient, RepositoryRepo repositoryRepo, FileFilter fileFilter, FileChunking fileChunking, VectorStore vectorStore) {
+    IndexingService(GithubApiClient githubApiClient,
+                    RepositoryRepo repositoryRepo,
+                    FileFilter fileFilter,
+                    FileChunking fileChunking,
+                    GithubApiRateLimiter rateLimiter,
+                    VectorStore vectorStore) {
         this.githubApiClient = githubApiClient;
         this.repositoryRepo = repositoryRepo;
         this.fileFilter = fileFilter;
         this.fileChunking = fileChunking;
         this.vectorStore = vectorStore;
+        this.rateLimiter = rateLimiter;
     }
 
     @Value("${indexing.max-file-bytes:102400}")
@@ -78,15 +87,29 @@ public class IndexingService {
             int filesProcessed = 0;
             int chunkCount = 0;
             int filesTotal = 0;
+            deleteExistingVectors(repoId.toString());
+
 
             Map<String, Object> repoTree = githubApiClient.getRepoTree(repo.getOwner(), repo.getName(), repo.getDefaultBranch());
             if (repoTree == null || !repoTree.containsKey("tree")) {
                 log.error("Error occurred while fetching repo tree for repository: {}", repoId);
+                markFailedStataus(userId, repoId, "Unable to fetch repository tree");
                 return;
             }
 
+            log.atInfo().log("Processing repository tree for repository: {}", repoId);
+
             List<String> filePaths = lisValidFiles((List<Map<String, Object>>) repoTree.get("tree"));
             filesTotal = filePaths.size();
+            log.atInfo().log("Found {} valid files in repository: {}", filesTotal, repoId);
+            log.info(
+                    "Starting indexing: repoId={}, githubRepo={}/{}, branch={}, eligibleFiles={}",
+                    repoId,
+                    repo.getOwner(),
+                    repo.getName(),
+                    repo.getDefaultBranch(),
+                    filesTotal
+            );
 
             List<Document> batch = new ArrayList<>();
 
@@ -99,9 +122,11 @@ public class IndexingService {
                         log.error("Error occurred while fetching file content for file: {} in repository: {}", filePath, repoId);
                         continue;
                     }
+                    log.atInfo().log("Processing file: {} in repository: {}", filePath, repoId);
                     String fileConentent = file.content();
-                    if (file.encoding().equals("base64")) {
-                        byte[] decodedBytes = Base64.getDecoder().decode(file.content());
+                    if ("base64".equals(file.encoding())) {
+                        String normalizedBase64 = file.content().replaceAll("\\s", "");
+                        byte[] decodedBytes = Base64.getDecoder().decode(normalizedBase64);
                         fileConentent = new String(decodedBytes);
                     }
                     List<Document> chunks = fileChunking.chunkFile(filePath, fileConentent, repo.getId());
@@ -120,13 +145,28 @@ public class IndexingService {
                 if (filesProcessed % PROGRESS_EVERY_N_FILES == 0 || filesProcessed == filePaths.size()) {
                     updateIndexStatus(userId ,repoId, filesProcessed, filesTotal, chunkCount, IndexStatus.INDEXING, null);
                 }
-                if (!batch.isEmpty()) {
-                    vectorStore.add(batch);
-                }
-                markReadyStatus(userId, repoId);
+                rateLimiter.pause();
             }
+            if (!batch.isEmpty()) {
+                vectorStore.add(batch);
+            }
+            if(chunkCount==0){
+                markFailedStataus(userId, repoId, "No valid files found for indexing");
+                return;
+            }
+            
+            markReadyStatus(userId, repoId);
         }
     }
+
+    private void deleteExistingVectors(String id) {
+        try {
+            var filter = new FilterExpressionBuilder().eq(METADATA_REPO_ID, id).build();
+            vectorStore.delete(filter);
+        } catch (Exception ex) {
+            log.warn("Could not delete existing vectors for repo {}: {}", id, ex.getMessage());
+        }
+    };
 
     public List<String> lisValidFiles(List<Map<String, Object>> trees) {
         return trees.stream()

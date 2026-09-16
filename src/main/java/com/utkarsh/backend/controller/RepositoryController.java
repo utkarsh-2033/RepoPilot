@@ -49,7 +49,7 @@ public class RepositoryController {
             indexingService.startIndexing(user.getUser().getId(), id);
             indexingService.asyncIndexing(user.getUser().getId(), id);
         } catch (Exception e) {
-            indexingService.markFailedStataus(user.getUser().getId(), id, e.getMessage());
+            indexingService.markFailedStataus(user.getUser().getId(), id, "Indexing failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
         return ResponseEntity.accepted().build();

@@ -30,7 +30,8 @@ public class RepoService {
         List<GithubRepositoryResponse> response= new ArrayList<>();
         repos.forEach(repo -> {
             GithubRepositoryResponse r = new GithubRepositoryResponse(
-                    repo.getGithubRepoId()
+                    repo.getId()
+                    , repo.getGithubRepoId()
                     , repo.getName()
                     , repo.getFullName()
                     , repo.getDescription()
@@ -42,6 +43,11 @@ public class RepoService {
                     , repo.getIsPrivate()
                     , repo.getCreatedAt()
                     , repo.getUpdatedAt()
+                    , repo.getIndexStatus().toString()
+                    , repo.getErrorMessage()
+                    , repo.getFilesProcessed()
+                    , repo.getFilesTotal()
+                    , repo.getChunkCount()
             );
             response.add(r);
         });
@@ -58,7 +64,8 @@ public class RepoService {
         if (repoOpt.isPresent()) {
             Repository repo = repoOpt.get();
             return new GithubRepositoryResponse(
-                    repo.getGithubRepoId()
+                    repo.getId()
+                    , repo.getGithubRepoId()
                     , repo.getName()
                     , repo.getFullName()
                     , repo.getDescription()
@@ -70,6 +77,11 @@ public class RepoService {
                     , repo.getIsPrivate()
                     , repo.getCreatedAt()
                     , repo.getUpdatedAt()
+                    , repo.getIndexStatus().toString()
+                    , repo.getErrorMessage()
+                    , repo.getFilesProcessed()
+                    , repo.getFilesTotal()
+                    , repo.getChunkCount()
             );
         } else {
             throw new RepositoryNotFoundException("Repository not found for user: " + userId + " and githubRepoId: " + githubRepoId);

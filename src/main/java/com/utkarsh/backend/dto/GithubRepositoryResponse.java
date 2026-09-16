@@ -1,8 +1,10 @@
 package com.utkarsh.backend.dto;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record GithubRepositoryResponse(
+        UUID id,
         Long githubRepoId,
         String name,
         String fullName,
@@ -14,6 +16,11 @@ public record GithubRepositoryResponse(
         String ownerHtmlUrl,
         Boolean isPrivate,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        String indexStatus,
+        String indexError,
+        int filesProcessed,
+        int filesTotal,
+        int chunkCount
 ) {
 }

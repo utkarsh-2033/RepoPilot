@@ -20,10 +20,11 @@ public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition = "TEXT")
     private String message;
     @Column(name="session_id", nullable = false)
     private UUID sessionId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;

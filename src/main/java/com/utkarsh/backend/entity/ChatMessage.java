@@ -1,16 +1,20 @@
 package com.utkarsh.backend.entity;
 
+import com.utkarsh.backend.dto.CitationDto;
 import jakarta.persistence.*;
-import lombok.Cleanup;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 public class ChatMessage {
 
     @Id
@@ -23,8 +27,17 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private List<CitationDto> citations;
+
     @Column(name="created_at", nullable = false, updatable = false)
     private Instant createdAt;
+
+    public ChatMessage() {
+
+    }
 
     @PrePersist
     void onCreate() {

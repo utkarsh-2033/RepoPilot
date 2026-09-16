@@ -6,6 +6,29 @@ RepoPilot is designed around one core principle: **the AI should answer from the
 
 This repository contains the Spring Boot backend responsible for authentication, GitHub integration, repository synchronization, asynchronous indexing, semantic retrieval, LLM generation, citation validation, and chat persistence.
 
+### 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Backend** | **Java, Spring Boot** |
+| **AI / RAG** | **Spring AI, ChatClient, ChatModel, VectorStore** |
+| **LLM** | Configurable LLM provider through Spring AI |
+| **Embeddings** | Configurable embedding provider through Spring AI |
+| **Vector Search** | Spring AI `VectorStore` |
+| **Database** | **PostgreSQL, Spring Data JPA / Hibernate** |
+| **Authentication** | **Spring Security, GitHub OAuth 2.0** |
+| **GitHub Integration** | GitHub REST API |
+| **Streaming** | **Server-Sent Events (SSE)** |
+| **Async Processing** | Spring `@Async`, `ThreadPoolTaskExecutor` |
+| **Code Processing** | Token-based chunking with Spring AI `TokenTextSplitter` |
+| **API Documentation** | OpenAPI / Swagger |
+
+### 🧠 Core Technologies
+
+**Spring Boot** · **Spring AI** · **Spring Security** · **Spring Data JPA** · **Hibernate** · **PostgreSQL** · **GitHub OAuth** · **GitHub API** · **RAG** · **Vector Search**  · **SSE**
+
+**Frontend:** [RepoPilot-frontend](https://github.com/utkarsh-2033/RepoPilot-frontend)
+
 ---
 
 ## ✨ What RepoPilot Does
